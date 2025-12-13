@@ -1,0 +1,7 @@
+{
+  "name": "Expert Chat - Financial Advisor",
+  "description": "A premium, minimalist financial advisor chat interface designed with sensory engineering principles for trust and professionalism.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

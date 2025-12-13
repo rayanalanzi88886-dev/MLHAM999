@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Expert Chat</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              coty2026: '#F0EEE9', // Cloud Dancer (Pantone 2026)
+              primary: {
+                light: '#D97706', // Claude AI Orange
+                dark: '#F59E0B',  // Claude AI Bright Orange
+              },
+              bg: {
+                light: '#F0EEE9', // Applied Cloud Dancer as main light background
+                dark: '#1E293B',  // Deep Dark Blue/Gray
+              },
+              surface: {
+                light: '#FFFFFF',
+                dark: '#334155',
+              },
+              text: {
+                light: '#2D3748', // Dark Charcoal
+                dark: '#F1F5F9',  // Soft White
+              },
+              userBubble: {
+                light: '#FFFFFF', // Clean White to contrast with Cloud Dancer bg
+                dark: '#0F172A',
+              }
+            },
+            fontFamily: {
+              cairo: ['Cairo', 'sans-serif'],
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root{
+        --fs: 16px;
+        --lh: 1.6;
+        --radius: 14px;
+        --gap: 10px;
+        --bubble-max: 86%;
+        --bubble-pad: 10px 12px;
+        --sa-top: env(safe-area-inset-top);
+        --sa-bottom: env(safe-area-inset-bottom);
+        --composer-h: 56px;
+        --coty-2026: #F0EEE9;
+      }
+      html{ font-size: var(--fs); }
+      body{
+        margin:0;
+        direction: rtl;
+        line-height: var(--lh);
+        font-family: 'Cairo', sans-serif;
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+      }
+      .app{
+        min-height: 100dvh;
+        padding-top: var(--sa-top);
+        padding-bottom: calc(var(--sa-bottom) + var(--composer-h));
+        overflow: hidden;
+      }
+      .chat-scroll{
+        height: 100%;
+        overflow: auto;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
+        padding: 12px;
+      }
+      .msg{
+        max-width: var(--bubble-max);
+        padding: var(--bubble-pad);
+        border-radius: var(--radius);
+        word-break: break-word;
+      }
+      .msg.user{ margin-right: auto; }
+      .msg.bot{  margin-left: auto;  }
+      .composer{
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        padding: 10px 12px;
+        padding-bottom: calc(10px + var(--sa-bottom));
+        min-height: var(--composer-h);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .composer input, .composer textarea{
+        font-size: 16px;
+        line-height: 1.4;
+        width: 100%;
+      }
+      .msg pre{
+        max-width: 100%;
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* Custom scrollbar for webkit */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: rgba(217, 119, 6, 0.3);
+        border-radius: 20px;
+      }
+      /* Scanning Animation for Images */
+      @keyframes scan {
+        0% { top: 0%; opacity: 0; }
+        15% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { top: 100%; opacity: 0; }
+      }
+      .scanning-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #D97706; /* Claude AI Orange */
+        box-shadow: 0 0 8px rgba(217, 119, 6, 0.8);
+        animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .scanning-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent, rgba(217, 119, 6, 0.1) 50%, transparent);
+        animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        pointer-events: none;
+      }
+      @media print {
+        @page { margin: 1cm; size: A4; }
+        body { background: white !important; -webkit-print-color-adjust: exact; }
+        header { position: static !important; border-bottom: 2px solid #000 !important; }
+        main { padding-bottom: 0 !important; }
+        .print\:hidden { display: none !important; }
+        .print\:block { display: block !important; }
+        .print\:w-full { width: 100% !important; }
+        .print\:border-none { border: none !important; }
+        .print\:bg-white { background-color: white !important; }
+        .print\:text-black { color: black !important; }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "uuid": "https://esm.sh/uuid@^13.0.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
