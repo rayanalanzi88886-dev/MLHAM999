@@ -20,14 +20,17 @@ export interface ChatState {
   error: string | null;
 }
 
-export type ExpertCategory = 'Money' | 'Self' | 'AI' | 'Tech' | 'Career';
+export type ExpertCategory = 'Money' | 'Self' | 'AI' | 'Tech' | 'Career' | 'Government' | 'Education' | 'Health' | 'Business' | 'Legal';
 
 export interface Expert {
   id: string;
   name: string;
   title: string;
+  description: string;
   category: ExpertCategory;
   emoji: string;
+  avatarUrl?: string;
   systemInstruction: string;
   welcomeMessage: string;
+  suggestions?: string[];
 }

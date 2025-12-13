@@ -1,0 +1,233 @@
+# قواعد Claude لمشروع RaqimAI 966
+
+## نظرة عامة
+مشروع RaqimAI 966 هو منصة ذكاء اصطناعي لتوليد البرومبتات باللغة العربية، مخصصة للسوق السعودي. المشروع يتكون من:
+- Frontend: React + Vite + Tailwind CSS
+- Backend: Node.js + Express
+- قاعدة البيانات: MongoDB / PostgreSQL
+- الذكاء الاصطناعي: تكامل مع OpenAI, Claude, DeepSeek
+
+## معايير البرمجة
+
+### JavaScript/React
+- استخدم ES6+ features (arrow functions, destructuring, template literals)
+- استخدم functional components مع React Hooks
+- استخدم async/await بدلاً من .then()
+- تجنب استخدام var، استخدم const و let فقط
+- اتبع naming conventions: camelCase للمتغيرات والدوال، PascalCase للمكونات
+
+### TypeScript (إذا استخدم)
+- حدد types بشكل واضح
+- تجنب استخدام any
+- استخدم interfaces للكائنات المعقدة
+- استخدم enums للقيم الثابتة
+
+### CSS/Tailwind
+- استخدم Tailwind utility classes أولاً
+- اكتب custom CSS فقط عند الضرورة
+- اتبع responsive design (mobile-first)
+- استخدم Arabic typography best practices
+- ادعم RTL layout
+
+## البنية والتنظيم
+
+### هيكل المجلدات
+```
+src/
+├── components/       # React components قابلة لإعادة الاستخدام
+├── pages/           # صفحات التطبيق الرئيسية
+├── hooks/           # Custom React hooks
+├── services/        # API calls و external services
+├── utils/           # Helper functions
+├── context/         # React Context providers
+├── assets/          # الصور والملفات الثابتة
+└── styles/          # ملفات CSS العامة
+```
+
+### تسمية الملفات
+- Components: `ComponentName.jsx`
+- Hooks: `useHookName.js`
+- Utils: `functionName.js`
+- Styles: `componentName.module.css`
+
+## اللغة العربية
+
+### المحتوى
+- جميع النصوص في الواجهة يجب أن تكون بالعربية الفصحى
+- استخدم مصطلحات تقنية مفهومة للمستخدم السعودي
+- تجنب الترجمة الحرفية، استخدم مصطلحات شائعة
+
+### الـ RTL Support
+- استخدم `dir="rtl"` في العناصر العربية
+- استخدم logical properties في CSS (margin-inline-start بدلاً من margin-left)
+- اختبر التصميم في كلا الاتجاهين
+
+### الخطوط
+- استخدم خطوط عربية واضحة مثل Cairo, Tajawal, IBM Plex Sans Arabic
+- تأكد من تحميل الخطوط بشكل صحيح
+- استخدم font weights مناسبة للقراءة
+
+## الأمن والخصوصية
+
+### API Keys
+- لا تضع API keys في الكود مباشرة
+- استخدم environment variables (.env)
+- أضف .env إلى .gitignore
+- استخدم .env.example كنموذج
+
+### المصادقة
+- استخدم JWT للمصادقة
+- احفظ tokens في httpOnly cookies
+- استخدم HTTPS في الإنتاج
+- طبق rate limiting على API endpoints
+
+### التحقق من البيانات
+- تحقق من جميع المدخلات (client + server)
+- استخدم validation libraries (Yup, Zod)
+- عقم البيانات قبل إدخالها في قاعدة البيانات
+- تجنب SQL/NoSQL injection
+
+## الأداء
+
+### تحسين React
+- استخدم React.memo للمكونات التي لا تتغير كثيراً
+- استخدم useMemo و useCallback بحكمة
+- قم بـ lazy loading للمكونات الكبيرة
+- استخدم code splitting
+
+### تحسين الشبكة
+- قلل حجم bundle size
+- استخدم compression (gzip/brotli)
+- استخدم CDN للملفات الثابتة
+- طبق caching strategies
+
+### الصور
+- استخدم WebP format
+- طبق lazy loading
+- استخدم responsive images
+- حسن الصور قبل الرفع
+
+## الاختبار
+
+### Unit Tests
+- اختبر utility functions
+- اختبر custom hooks
+- استخدم Jest و React Testing Library
+
+### Integration Tests
+- اختبر تدفقات المستخدم الرئيسية
+- اختبر API endpoints
+- اختبر تكامل قاعدة البيانات
+
+### E2E Tests
+- اختبر السيناريوهات الكاملة
+- استخدم Playwright أو Cypress
+- اختبر على متصفحات مختلفة
+
+## الوثائق
+
+### الكود
+- اكتب تعليقات واضحة بالعربية أو الإنجليزية
+- وثق functions معقدة
+- اشرح business logic غير واضحة
+
+### README
+- اشرح كيفية تشغيل المشروع
+- اذكر المتطلبات
+- وثق environment variables
+- اشرح البنية الأساسية
+
+### API Documentation
+- وثق جميع endpoints
+- اشرح request/response format
+- أعط أمثلة للاستخدام
+- اذكر error responses
+
+## Git Workflow
+
+### Commits
+- اكتب commit messages واضحة
+- استخدم conventional commits format
+- مثال: `feat: إضافة صفحة توليد البرومبتات`
+- مثال: `fix: إصلاح مشكلة RTL في القائمة`
+
+### Branches
+- `main` للإنتاج
+- `develop` للتطوير
+- `feature/feature-name` للميزات الجديدة
+- `fix/bug-name` لإصلاح الأخطاء
+
+### Pull Requests
+- اكتب وصف واضح للتغييرات
+- اذكر issues المرتبطة
+- تأكد من اجتياز الاختبارات
+- اطلب مراجعة الكود
+
+## التكامل مع الذكاء الاصطناعي
+
+### OpenAI API
+- استخدم أحدث models
+- طبق error handling شامل
+- راقب usage و costs
+- استخدم streaming للـ responses الطويلة
+
+### Claude API
+- استخدم مع prompt engineering محسّن
+- راعي context window limits
+- استخدم system prompts فعالة
+
+### DeepSeek API
+- استخدم للمهام المناسبة
+- قارن النتائج مع models أخرى
+- راقب الأداء
+
+## الاستضافة والنشر
+
+### Frontend
+- يمكن استضافة على: Vercel, Netlify, Cloudflare Pages
+- تأكد من تفعيل automatic deployments
+- استخدم preview deployments للـ PRs
+
+### Backend
+- يمكن استضافة على: Railway, Render, Heroku, AWS
+- استخدم environment variables
+- فعّل auto-scaling إذا لزم
+
+### قاعدة البيانات
+- استخدم managed database services
+- طبق backups تلقائية
+- راقب performance
+
+## معايير إضافية
+
+### Accessibility
+- استخدم semantic HTML
+- أضف alt text للصور
+- تأكد من keyboard navigation
+- اختبر مع screen readers
+
+### SEO
+- استخدم meta tags مناسبة
+- أضف Open Graph tags
+- استخدم structured data
+- حسّن page speed
+
+### Analytics
+- تتبع user behavior
+- راقب errors
+- قس performance metrics
+- استخدم privacy-friendly tools
+
+## أولويات المشروع
+1. تجربة مستخدم ممتازة بالعربية
+2. أداء سريع ومستقر
+3. أمان وخصوصية البيانات
+4. كود نظيف وقابل للصيانة
+5. توثيق شامل
+
+## عند كتابة الكود
+- اسأل عن المتطلبات إذا لم تكن واضحة
+- اقترح best practices
+- نبّه على potential issues
+- قدم alternatives عند الإمكان
+- اشرح الكود المعقد

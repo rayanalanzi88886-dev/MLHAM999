@@ -10,7 +10,9 @@ interface SidebarProps {
   onSelectExpert: (expert: Expert) => void;
   customAvatars: Record<string, string>;
   onUpdateAvatar: (expertId: string, avatarUrl: string | null) => void;
-  currentExpert: Expert; // Passed explicitly for better TS support in the header section
+  currentExpert: Expert;
+  expertThemes: Record<string, string>;
+  onUpdateTheme: (expertId: string, themeColor: string) => void;
 }
 
 // Curated Professional Avatar Gallery (SVG as Base64 for offline reliability)
@@ -25,6 +27,15 @@ const AVATAR_GALLERY = [
   { id: 'creative-purple', src: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOEY3QUU1O3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzZDNjNGRjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0idXJsKCNncmFkMSkiLz48cGF0aCBkPSJNMzUgMzVIMzVWNjVIMzVWMzVaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjUiLz48cGF0aCBkPSJNMzUgNTBINjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNSIvPjwvc3ZnPg==' }
 ];
 
+const THEME_COLORS = [
+  { id: 'default', color: '#F97316', label: 'برتقالي (افتراضي)' },
+  { id: 'blue', color: '#3B82F6', label: 'أزرق رسمي' },
+  { id: 'green', color: '#10B981', label: 'أخضر نمو' },
+  { id: 'purple', color: '#8B5CF6', label: 'بنفسجي إبداعي' },
+  { id: 'rose', color: '#F43F5E', label: 'وردي دافئ' },
+  { id: 'slate', color: '#64748B', label: 'رمادي حيادي' },
+];
+
 export const Sidebar: React.FC<SidebarProps> = ({ 
   isOpen, 
   onClose, 
@@ -32,7 +43,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectExpert, 
   customAvatars, 
   onUpdateAvatar,
-  currentExpert 
+  currentExpert,
+  expertThemes,
+  onUpdateTheme
 }) => {
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -88,27 +101,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
       />
 
       {/* Drawer */}
-      <div className={`fixed inset-y-0 right-0 w-[85vw] sm:w-80 bg-surface-light dark:bg-surface-dark shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-700 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed inset-y-0 right-0 w-[80vw] sm:w-80 bg-surface-light dark:bg-surface-dark shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-700 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         
         {/* Header - Active Expert Profile & Customization */}
-        <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-surface-dark border-b border-gray-100 dark:border-gray-700">
-           <div className="p-5 flex items-start justify-between">
-              <h2 className="text-xl font-bold text-text-light dark:text-text-dark">الملف الشخصي</h2>
+        <div className="bg-white dark:bg-surface-dark border-b border-gray-100 dark:border-gray-800">
+           <div className="p-4 sm:p-5 flex items-start justify-between">
+              <h2 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white">الملف الشخصي</h2>
               <button 
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500"
+                className="p-1.5 sm:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-400 hover:text-gray-600"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
            </div>
            
-           <div className="px-5 pb-6 flex flex-col items-center">
+           <div className="px-4 sm:px-5 pb-4 sm:pb-6 flex flex-col items-center">
               <div className="relative group mb-3">
-                 <div className="w-20 h-20 rounded-full bg-white dark:bg-white/5 p-1 border-2 border-primary-light/20 dark:border-primary-dark/20 shadow-lg relative overflow-hidden">
+                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white dark:bg-white/5 p-1 border-2 border-primary-light/20 dark:border-primary-dark/20 shadow-lg relative overflow-hidden">
                     {customAvatars[selectedExpertId] ? (
                       <img src={customAvatars[selectedExpertId]} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+                    ) : currentExpert.avatarUrl ? (
+                      <img src={currentExpert.avatarUrl} alt="Avatar" className="w-full h-full rounded-full object-cover" />
                     ) : (
-                      <div className="w-full h-full rounded-full bg-primary-light/10 dark:bg-primary-dark/10 flex items-center justify-center text-3xl">
+                      <div className="w-full h-full rounded-full bg-primary-light/10 dark:bg-primary-dark/10 flex items-center justify-center text-2xl sm:text-3xl">
                         {currentExpert.emoji}
                       </div>
                     )}
@@ -118,21 +133,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       onClick={() => setIsEditingAvatar(!isEditingAvatar)}
                       className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer text-white"
                     >
-                      <Camera className="w-6 h-6" />
+                      <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                  </div>
                  
                  {/* Quick Edit Button (Mobile Friendly) */}
                  <button 
                     onClick={() => setIsEditingAvatar(!isEditingAvatar)}
-                    className="absolute bottom-0 right-0 bg-primary-light text-white p-1.5 rounded-full shadow-md sm:hidden border-2 border-white dark:border-surface-dark"
+                    className="absolute bottom-0 right-0 bg-primary-light text-white p-1 sm:p-1.5 rounded-full shadow-md sm:hidden border-2 border-white dark:border-surface-dark"
                  >
-                   <Camera className="w-3 h-3" />
+                   <Camera className="w-2.5 h-2.5" />
                  </button>
               </div>
 
-              <h3 className="text-lg font-bold text-text-light dark:text-text-dark">{currentExpert.name}</h3>
-              <p className="text-xs text-primary-light dark:text-primary-dark font-medium opacity-80">{currentExpert.title}</p>
+              <h3 className="text-base sm:text-lg font-bold text-text-light dark:text-text-dark">{currentExpert.name}</h3>
+              <p className="text-[10px] sm:text-xs text-primary-light dark:text-primary-dark font-medium opacity-80">{currentExpert.title}</p>
 
               {/* Avatar Selector UI (Expandable) */}
               <div className={`w-full overflow-hidden transition-all duration-300 ${isEditingAvatar ? 'max-h-72 mt-4 opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -190,6 +205,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                  </div>
               </div>
+
+              {/* Theme Selector */}
+              <div className="w-full mt-4 px-1">
+                <p className="text-xs text-gray-400 font-bold mb-2 text-center">لون المحادثة</p>
+                <div className="flex justify-center gap-2 flex-wrap">
+                  {THEME_COLORS.map((theme) => (
+                    <button
+                      key={theme.id}
+                      onClick={() => onUpdateTheme(selectedExpertId, theme.color)}
+                      className={`w-6 h-6 rounded-full border-2 transition-all ${
+                        (expertThemes[selectedExpertId] || '#F97316') === theme.color
+                          ? 'border-gray-900 dark:border-white scale-110 shadow-md'
+                          : 'border-transparent hover:scale-110'
+                      }`}
+                      style={{ backgroundColor: theme.color }}
+                      title={theme.label}
+                    />
+                  ))}
+                </div>
+              </div>
            </div>
         </div>
 
@@ -225,6 +260,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-lg overflow-hidden">
                          {hasCustom ? (
                            <img src={hasCustom} alt="" className="w-full h-full object-cover" />
+                         ) : expert.avatarUrl ? (
+                           <img src={expert.avatarUrl} alt="" className="w-full h-full object-cover" />
                          ) : (
                            expert.emoji
                          )}

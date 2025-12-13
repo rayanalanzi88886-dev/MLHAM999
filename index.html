@@ -13,26 +13,33 @@
         theme: {
           extend: {
             colors: {
-              coty2026: '#F0EEE9', // Cloud Dancer (Pantone 2026)
+              coty2026: '#F0EEE9', // Pantone 2026 Cloud Dancer
+              cloud: '#F0EEE9',
               primary: {
-                light: '#D97706', // Claude AI Orange
-                dark: '#F59E0B',  // Claude AI Bright Orange
+                light: '#FF5D39', // Postiz-like Vibrant Coral/Orange
+                dark: '#E64A28',  
+                DEFAULT: '#FF5D39',
+              },
+              accent: {
+                light: '#FF5D39', 
+                dark: '#FF5D39',
+                DEFAULT: '#FF5D39',
               },
               bg: {
-                light: '#F0EEE9', // Applied Cloud Dancer as main light background
-                dark: '#1E293B',  // Deep Dark Blue/Gray
+                light: '#F0EEE9', // Cloud Dancer as main background
+                dark: '#0F172A',  
               },
               surface: {
-                light: '#FFFFFF',
-                dark: '#334155',
+                light: '#FFFFFF', // White cards on Cloud Dancer background
+                dark: '#1E293B', 
               },
               text: {
-                light: '#2D3748', // Dark Charcoal
-                dark: '#F1F5F9',  // Soft White
+                light: '#0F172A', // Dark Slate 900
+                dark: '#F8FAFC',  
               },
               userBubble: {
-                light: '#FFFFFF', // Clean White to contrast with Cloud Dancer bg
-                dark: '#0F172A',
+                light: '#FF5D39', // Primary color for user bubbles
+                dark: '#FF5D39',
               }
             },
             fontFamily: {

@@ -80,21 +80,21 @@ export const FormattedText: React.FC<FormattedTextProps> = ({ text, isUser }) =>
   const content = (
     <>
       {/* Action Buttons */}
-      <div className={`absolute top-0 ${isUser ? 'right-auto left-[-40px] sm:left-[-50px]' : 'left-[-40px] sm:left-[-50px]'} flex flex-col gap-1 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity`}>
+      <div className={`absolute top-0 ${isUser ? 'right-auto left-[-32px] sm:left-[-50px]' : 'left-[-32px] sm:left-[-50px]'} flex flex-col gap-1 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity`}>
         <button
           onClick={handleCopy}
-          className="p-1.5 rounded-full text-gray-400 hover:text-primary-light dark:hover:text-primary-dark hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+          className="p-1 sm:p-1.5 rounded-full text-gray-400 hover:text-primary-light dark:hover:text-primary-dark hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           title="نسخ النص"
         >
-          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
         </button>
         {!isUser && (
           <button
             onClick={handleSpeak}
-            className={`p-1.5 rounded-full transition-all ${isSpeaking ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-400 hover:text-primary-light dark:hover:text-primary-dark hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`p-1 sm:p-1.5 rounded-full transition-all ${isSpeaking ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-400 hover:text-primary-light dark:hover:text-primary-dark hover:bg-black/5 dark:hover:bg-white/5'}`}
             title={isSpeaking ? "إيقاف القراءة" : "قراءة النص"}
           >
-            {isSpeaking ? <StopCircle className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            {isSpeaking ? <StopCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Volume2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
           </button>
         )}
       </div>
