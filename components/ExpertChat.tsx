@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, ArrowLeft, Bot, Sparkles, Copy, Check, AlertCircle } from 'lucide-react';
+import { Send, ArrowLeft, Bot, Sparkles, Copy, Check, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Expert, ChatMessage, ChatAttachment, UserUsageStats } from '../types-hybrid';
 import { callUnifiedAPI, usageTracker } from '../services/unified-ai';
 import { FormattedText } from './FormattedText';
@@ -30,6 +30,7 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [usageStats, setUsageStats] = useState<UserUsageStats>(usageTracker.getStats());
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
   const [smartSuggestions, setSmartSuggestions] = useState<string[]>(() => 
     getInitialSuggestions(expert.id)
   );
@@ -140,6 +141,39 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const toggleMessageExpansion = (messageId: string) => {
+    setExpandedMessages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(messageId)) {
+        newSet.delete(messageId);
+      } else {
+        newSet.add(messageId);
+      }
+      return newSet;
+    });
+  };
+
+  const extractSummaryAndDetails = (content: string) => {
+    // تقسيم النص إلى فقرات
+    const paragraphs = content.split('\n\n').filter(p => p.trim());
+    
+    // إذا كان النص قصير (أقل من 200 حرف)، لا حاجة للتقسيم
+    if (content.length < 200) {
+      return { summary: content, details: '' };
+    }
+    
+    // الملخص: أول فقرة أو أول 150 حرف
+    let summary = paragraphs[0] || '';
+    if (summary.length > 150) {
+      summary = summary.substring(0, 150) + '...';
+    }
+    
+    // التفاصيل: باقي المحتوى
+    const details = paragraphs.slice(1).join('\n\n');
+    
+    return { summary, details };
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -285,10 +319,58 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
                       : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-100 dark:border-gray-700 px-4 py-3'
                 }`}>
               {/* Message content */}
-              <FormattedText 
-                text={msg.content} 
-                isUser={msg.role === 'user'} 
-              />
+              {msg.role === 'model' && !msg.isError && msg.content.length > 200 ? (
+                <>
+                  {/* ملخص TL;DR */}
+                  <div className="mb-3">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-lg mb-2">
+                      <Sparkles className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                      <span className="text-xs font-bold text-blue-700 dark:text-blue-300">ملخص (TL;DR)</span>
+                    </div>
+                    <FormattedText 
+                      text={extractSummaryAndDetails(msg.content).summary} 
+                      isUser={false} 
+                    />
+                  </div>
+
+                  {/* زر التفاصيل */}
+                  {extractSummaryAndDetails(msg.content).details && (
+                    <>
+                      <button
+                        onClick={() => toggleMessageExpansion(msg.id)}
+                        className="flex items-center gap-2 w-full px-3 py-2 mt-2 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition-all border border-blue-200 dark:border-blue-800"
+                      >
+                        {expandedMessages.has(msg.id) ? (
+                          <>
+                            <ChevronUp className="w-4 h-4" />
+                            <span>إخفاء التفاصيل</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-4 h-4" />
+                            <span>عرض التفاصيل الكاملة</span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* التفاصيل الكاملة */}
+                      {expandedMessages.has(msg.id) && (
+                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <FormattedText 
+                            text={extractSummaryAndDetails(msg.content).details} 
+                            isUser={false} 
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              ) : (
+                <FormattedText 
+                  text={msg.content} 
+                  isUser={msg.role === 'user'} 
+                />
+              )}
               
               {/* Message footer */}
               {msg.role === 'model' && !msg.isError && (
