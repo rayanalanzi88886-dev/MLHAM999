@@ -1,6 +1,6 @@
 import React from 'react';
 import { Moon, Sun, Trash2, Share2, Download, Menu, ArrowRight } from 'lucide-react';
-import { Theme, Expert } from '../types';
+import { Theme, Expert } from '../types-hybrid';
 import { CATEGORY_NAMES } from '../data/experts';
 
 interface HeaderProps {

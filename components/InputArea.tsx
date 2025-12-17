@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Mic, Paperclip, X, FileText } from 'lucide-react';
-import { ChatAttachment } from '../types';
+import { ChatAttachment } from '../types-hybrid';
 
 interface InputAreaProps {
   onSend: (message: string, attachment?: ChatAttachment) => void;
   disabled: boolean;
+  placeholder?: string;
 }
 
 declare global {
@@ -14,7 +15,7 @@ declare global {
   }
 }
 
-export const InputArea: React.FC<InputAreaProps> = ({ onSend, disabled }) => {
+export const InputArea: React.FC<InputAreaProps> = ({ onSend, disabled, placeholder }) => {
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [attachment, setAttachment] = useState<ChatAttachment | undefined>(undefined);
@@ -210,7 +211,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onSend, disabled }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isRecording ? "جاري الاستماع..." : "اكتب استشارتك المالية هنا..."}
+              placeholder={isRecording ? "جاري الاستماع..." : (placeholder || "اكتب استشارتك المالية هنا...")}
               disabled={disabled}
               className={`flex-1 py-3 sm:py-4 pr-1 sm:pr-2 pl-1 sm:pl-2 bg-transparent border-none focus:ring-0 resize-none max-h-[120px] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm sm:text-base rounded-[20px] sm:rounded-[24px] ${isRecording ? 'placeholder-red-500/70' : ''}`}
               style={{ minHeight: '48px' }}

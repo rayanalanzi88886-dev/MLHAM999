@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Expert } from '../types';
-import { EXPERTS, CATEGORY_NAMES, CATEGORY_ORDER } from '../data/experts';
+import { Expert } from '../types-hybrid';
+import { EXPERTS, CATEGORY_NAMES, CATEGORY_ORDER } from '../data/experts-hybrid';
 import { X, ChevronLeft, Camera, Upload, RefreshCw } from 'lucide-react';
 
 interface SidebarProps {
