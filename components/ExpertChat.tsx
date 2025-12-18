@@ -4,12 +4,6 @@ import { Expert, ChatMessage, ChatAttachment, UserUsageStats } from '../types-hy
 import { callUnifiedAPI, usageTracker } from '../services/unified-ai';
 import { FormattedText } from './FormattedText';
 import { InputArea } from './InputArea';
-import { 
-  getContextualSuggestions, 
-  getSuggestionsByResponseLength,
-  deduplicateSuggestions,
-  getInitialSuggestions 
-} from '../utils/CONTEXTUAL_SUGGESTIONS';
 
 interface ExpertChatProps {
   expert: Expert;
@@ -17,8 +11,6 @@ interface ExpertChatProps {
   initialMessages?: ChatMessage[];
   startWithInput?: string;
 }
-
-// ===== 🎯 نظام الاقتراحات الذكية محمّل من ملف خارجي =====
 
 export const ExpertChat: React.FC<ExpertChatProps> = ({ 
   expert, 
@@ -32,9 +24,6 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
   const [usageStats, setUsageStats] = useState<UserUsageStats>(usageTracker.getStats());
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
-  const [smartSuggestions, setSmartSuggestions] = useState<string[]>(() => 
-    getInitialSuggestions(expert.id)
-  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasStartedRef = useRef(false);
 
@@ -45,33 +34,6 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  // تحديث الاقتراحات الذكية بناءً على آخر رد من الخبير
-  useEffect(() => {
-    // احصل على آخر رد من الخبير
-    const lastModelMessage = [...messages]
-      .reverse()
-      .find(m => m.role === 'model' && !m.isError);
-    
-    if (lastModelMessage) {
-      // احصل على اقتراحات ديناميكية حسب رد الخبير
-      let suggestions = getContextualSuggestions(
-        lastModelMessage.content,
-        expert.id
-      );
-      
-      // نظف الاقتراحات المكررة
-      suggestions = deduplicateSuggestions(suggestions);
-      
-      // حدد الاقتراحات (أول 5 فقط)
-      setSmartSuggestions(suggestions.slice(0, 5));
-      
-      console.log('🎯 Contextual suggestions:', suggestions);
-    } else {
-      // إذا لم يوجد رد بعد، استخدم الاقتراحات الافتراضية
-      setSmartSuggestions(getInitialSuggestions(expert.id));
-    }
-  }, [messages, expert.id]);
 
   useEffect(() => {
     if (startWithInput && !hasStartedRef.current) {
@@ -188,7 +150,6 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
   const handleClearChat = () => {
     localStorage.removeItem(`expert_chat_history_${expert.id}`);
     setMessages([]);
-    setSmartSuggestions(getInitialSuggestions(expert.id));
   };
 
   return (
@@ -286,21 +247,23 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
               />
             </div>
 
-            {/* Smart Suggestions Cards - داخل رسالة الترحيب */}
-            <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">جرّب هذه الأسئلة:</p>
-              <div className="flex flex-wrap gap-2">
-                {smartSuggestions.slice(0, 4).map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+            {/* Quick Suggestions - داخل رسالة الترحيب */}
+            {expert.suggestions && expert.suggestions.length > 0 && (
+              <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">جرّب هذه الأسئلة:</p>
+                <div className="flex flex-wrap gap-2">
+                  {expert.suggestions.map((suggestion, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="px-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -309,7 +272,8 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
           const isLastModelMessage = msg.role === 'model' && 
             index === messages.length - 1 && 
             !msg.isError &&
-            smartSuggestions.length > 0;
+            expert.suggestions && 
+            expert.suggestions.length > 0;
           
           return (
             <React.Fragment key={msg.id}>
@@ -431,7 +395,7 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {smartSuggestions.map((suggestion, idx) => (
+                  {expert.suggestions.map((suggestion, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(suggestion)}
@@ -462,15 +426,15 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ===== SMART SUGGESTIONS BAR ===== */}
-      {smartSuggestions.length > 0 && (
+      {/* ===== SUGGESTIONS BAR ===== */}
+      {expert.suggestions && expert.suggestions.length > 0 && messages.length === 0 && (
         <div className="px-3 py-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 overflow-x-auto">
           <div className="flex gap-2 pb-1">
             <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
               <Sparkles className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">اقتراحات:</span>
             </div>
-            {smartSuggestions.map((suggestion, idx) => (
+            {expert.suggestions.map((suggestion, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(suggestion)}
