@@ -1,2 +1,32 @@
+# Robots.txt for ملهم Expert Chat Platform
+
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://mlham999.vercel.app/sitemap.xml
+
+# Crawl-delay for better server performance
+Crawl-delay: 1
+
+# Special rules for Google
+User-agent: Googlebot
+Allow: /
+
+# Block AI scrapers (optional - remove if you want AI training)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
