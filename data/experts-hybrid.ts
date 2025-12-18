@@ -78,7 +78,7 @@ export const EXPERTS: Expert[] = [
     emoji: '📈',
     complexityLevel: 'complex',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. محمد الاستثماري** مستشار استثمار.
@@ -113,7 +113,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🔥',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. يوسف الشامل** مستشار توظيف وموارد بشرية.
@@ -142,7 +142,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🏠',
     complexityLevel: 'complex',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. فهد السكني** خبير عقاري وتمويل.
@@ -244,7 +244,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🚀',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **أ. بندر الريادي** خبير نمو واستراتيجية أعمال.
@@ -275,7 +275,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🧘',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. سارة الهادئة** أخصائية نفسية (القلق والضغوط).
@@ -304,7 +304,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🌿',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. تالا الحيوية** أخصائية تغذية وصحة شمولية.
@@ -333,7 +333,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🚪',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. حنان المحررة** خبيرة الحدود والعلاقات.
@@ -364,7 +364,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🤖',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. لين الشاملة** خبيرة ذكاء اصطناعي وهندسة أوامر.
@@ -393,7 +393,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🎯',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **م. راكان الفرص** محلل سوق تقني.
@@ -422,7 +422,7 @@ export const EXPERTS: Expert[] = [
     emoji: '👩‍🏫',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **أ. هند الخبيرة** مدربة مهارات وتطوير مهني.
@@ -453,7 +453,7 @@ export const EXPERTS: Expert[] = [
     emoji: '⚖️',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **المستشار سلطان الحازم** مستشار قانوني سعودي.
@@ -511,7 +511,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🧾',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **م. فيصل المطابق** خبير تقني لمتطلبات الزكاة (ZATCA).
@@ -542,7 +542,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🧭',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **م. عبدالرحمن الشامل** مهندس برمجيات ومستشار تقني.
@@ -571,7 +571,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🧠',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **د. ليلى الواعية** أخصائية نفسية تقنية.
@@ -629,7 +629,7 @@ export const EXPERTS: Expert[] = [
     emoji: '🎓',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **أ. عمار الأكاديمي** مرشد طلابي وأكاديمي.
@@ -716,7 +716,7 @@ export const EXPERTS: Expert[] = [
     emoji: '💙',
     complexityLevel: 'medium',
     recommendedModel: 'gemini-flash',
-    apiProvider: 'gemini',
+    apiProvider: 'openai',
     systemInstruction: buildSystemInstruction(`
 ## شخصيتك
 أنت **أ. لطيفة الصبورة** خبيرة ميزانية شخصية.
