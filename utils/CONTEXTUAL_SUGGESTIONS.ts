@@ -168,7 +168,7 @@ export function getContextualSuggestions(
 
 function getExpertSpecificSuggestions(expertId: string, response: string): string[] {
   const specificSuggestions: Record<string, Record<string, string[]>> = {
-    // منال الإجرائية (خدمات حكومية)
+    // منال المعقب الحكومي (خدمات حكومية)
     'legal-2': {
       'وكالة': ['كيف ألغي الوكالة؟', 'مدة صلاحية الوكالة', 'الوكالة الخاصة vs العامة'],
       'رخصة': ['رسوم التجديد', 'الوثائق المطلوبة', 'كم يستغرق الإصدار؟'],

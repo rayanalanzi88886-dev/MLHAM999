@@ -60,16 +60,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
         setIsLoaded(true);
     }, []);
 
-    // Staggered expert card animation
-    useEffect(() => {
-        const experts = [...filteredPriorityExperts, ...filteredOtherExperts];
-        experts.forEach((_, index) => {
-            setTimeout(() => {
-                setVisibleExperts(prev => new Set([...prev, index]));
-            }, index * 50); // 50ms delay between each card
-        });
-    }, [filteredPriorityExperts, filteredOtherExperts]);
-
     // ===== Typewriter Effect =====
     const TYPEWRITER_PREFIX = 'أبي ';
     const TYPEWRITER_PHRASES = useMemo(
