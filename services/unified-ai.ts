@@ -287,23 +287,28 @@ async function callGemini(
     throw new Error('مفتاح Gemini API غير موجود في المتغيرات البيئية');
   }
 
-  // Use the latest Gemini Flash model
-  const modelName = 'gemini-2.0-flash-exp';
+  // Use a stable, widely available Gemini model
+  const modelName = 'gemini-1.5-flash-8b-latest';
   const modelConfig = MODEL_COSTS['gemini-flash'] || { input: 0, output: 0 };
   
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
 
-  // Convert messages
-  const contents = messages.map(msg => ({
-    role: msg.role === 'model' ? 'model' : 'user',
-    parts: [{ text: msg.content }]
-  }));
+  // Build contents: prepend system instruction to ensure compatibility without systemInstruction field
+  const contents = [
+    {
+      role: 'user',
+      parts: [{ text: `SYSTEM INSTRUCTIONS:\n${expert.systemInstruction}` }]
+    },
+    ...messages
+      .filter(m => m.role !== 'system')
+      .map(msg => ({
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
+      }))
+  ];
 
   const body = {
-    contents: contents,
-    systemInstruction: {
-      parts: [{ text: expert.systemInstruction }]
-    },
+    contents,
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: expert.complexityLevel === 'simple' ? 800 : 
@@ -318,6 +323,7 @@ async function callGemini(
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
       },
       body: JSON.stringify(body)
     });
@@ -327,7 +333,8 @@ async function callGemini(
       console.error('Gemini API Error:', errorData);
       
       if (response.status === 400) {
-        throw new Error('طلب غير صالح إلى Gemini API');
+        const msg = (errorData && (errorData.error?.message || errorData.message)) || 'طلب غير صالح إلى Gemini API';
+        throw new Error(msg);
       } else if (response.status === 401 || response.status === 403) {
         throw new Error('مفتاح Gemini API غير صالح أو منتهي الصلاحية');
       } else if (response.status === 429) {
