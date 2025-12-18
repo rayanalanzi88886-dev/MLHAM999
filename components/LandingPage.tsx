@@ -48,17 +48,10 @@ const UX_PSYCHOLOGY = {
 export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImportChat, toggleTheme, theme }) => {
     const [selectedCategory, setSelectedCategory] = useState<ExpertCategory | 'All'>('All');
     const [searchQuery, setSearchQuery] = useState('');
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [visibleExperts, setVisibleExperts] = useState<Set<number>>(new Set());
     const [quickPrompt, setQuickPrompt] = useState('');
     const [isPromptFocused, setIsPromptFocused] = useState(false);
     const [showAllExperts, setShowAllExperts] = useState(false);
     const importInputRef = useRef<HTMLInputElement>(null);
-
-    // Animation on mount
-    useEffect(() => {
-        setIsLoaded(true);
-    }, []);
 
     // ===== Typewriter Effect =====
     const TYPEWRITER_PREFIX = 'أبي ';
@@ -198,9 +191,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
         <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark font-cairo transition-colors duration-300 selection:bg-accent selection:text-white">
             
             {/* ===== 1️⃣ HERO SECTION - مبسط ومركز ===== */}
-            <section className={`relative min-h-[85vh] flex items-center justify-center overflow-hidden transition-all duration-1000 ${
-                isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}>
+            <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
                 {/* Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bg-light via-white to-bg-light dark:from-black dark:via-bg-dark dark:to-surface-dark" />
                 <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/70 dark:bg-white/5 blur-3xl" />
@@ -218,10 +209,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
                     </div>
 
                     {/* Main Card */}
-                    <div className="rounded-3xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-surface-dark/60 backdrop-blur-xl shadow-2xl p-6 md:p-8 transition-all duration-500 hover:shadow-3xl hover:scale-[1.01]">
+                    <div className="rounded-3xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-surface-dark/60 backdrop-blur-xl shadow-2xl p-8">
                         
                         {/* Trust Badges - مبسط */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs font-bold text-gray-500 dark:text-gray-400 mb-6 transition-all duration-300">
+                        <div className="flex items-center justify-center gap-6 text-xs font-bold text-gray-500 dark:text-gray-400 mb-6">
                             <span className="inline-flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4 text-green-500" />
                                 آمن 100%
@@ -234,8 +225,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
                         </div>
 
                         {/* Hero Title */}
-                        <div className="text-center mb-6 md:mb-8 transition-all duration-700">
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-gray-900 dark:text-white mb-4 transition-all duration-500">
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl md:text-5xl font-black leading-tight text-gray-900 dark:text-white mb-4">
                                 وش يشغل بالك اليوم؟ 🤔
                             </h1>
                             <p className="text-lg text-gray-500 dark:text-gray-400 font-bold">
@@ -260,11 +251,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
                                             ? 'اكتب سؤالك هنا...'
                                             : (typewriterSuffix.length > 0 ? `${TYPEWRITER_PREFIX}${typewriterSuffix}` : 'أبي...')
                                     }
-                                    className="w-full px-4 sm:px-6 py-4 sm:py-5 text-lg sm:text-xl font-bold border-2 border-transparent focus:border-accent focus:shadow-xl rounded-2xl bg-white dark:bg-surface-dark shadow-lg outline-none transition-all duration-300 placeholder:text-gray-300 dark:placeholder:text-gray-500 pl-20 sm:pl-28 hover:shadow-xl"
+                                    className="w-full px-6 py-5 text-xl font-bold border-2 border-transparent focus:border-accent rounded-2xl bg-white dark:bg-surface-dark shadow-lg outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-500 pl-28"
                                 />
                                 <button
                                     onClick={() => startNow()}
-                                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-dark text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-black text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-dark text-white px-6 py-2.5 rounded-xl font-black text-base transition-all hover:scale-105"
                                 >
                                     ابدأ الآن
                                 </button>
@@ -280,7 +271,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectExpert, onImpo
                                             setQuickPrompt(chip.value);
                                             setTimeout(() => startNow(chip.expertId), 0);
                                         }}
-                                        className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 transition-all duration-300 hover:scale-105 hover:shadow-md active:scale-95"
+                                        className="px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors"
                                     >
                                         {chip.label}
                                     </button>
@@ -499,19 +490,10 @@ interface ExpertCardProps {
 }
 
 const ExpertCard: React.FC<ExpertCardProps> = ({ expert, onSelect, isPriority }) => {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsVisible(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <div 
             onClick={() => onSelect(expert)}
-            className={`group relative bg-white dark:bg-surface-dark rounded-2xl p-4 sm:p-6 border-2 border-gray-100 dark:border-gray-800 hover:border-accent/50 transition-all duration-500 cursor-pointer hover:-translate-y-2 hover:shadow-2xl active:scale-95 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
+            className="group relative bg-white dark:bg-surface-dark rounded-2xl p-6 border-2 border-gray-100 dark:border-gray-800 hover:border-accent/50 transition-all cursor-pointer hover:-translate-y-1 hover:shadow-xl"
         >
             {/* Priority Badge */}
             {isPriority && (

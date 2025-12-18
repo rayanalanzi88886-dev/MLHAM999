@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملهم | 22 خبير في خدمتك</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .expert-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .money { background: #fef3c7; color: #92400e; }
+        .career { background: #dbeafe; color: #1e40af; }
+        .business { background: #fce7f3; color: #9f1239; }
+        .legal { background: #e0e7ff; color: #3730a3; }
+        .ai { background: #f3e8ff; color: #6b21a8; }
+        .tech { background: #ccfbf1; color: #115e59; }
+        .health { background: #dcfce7; color: #166534; }
+        .self { background: #ffe4e6; color: #9f1239; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-5xl font-black mb-4">ملهم - منصة الخبراء</h1>
+            <p class="text-xl opacity-90">22 خبير متخصص في خدمتك</p>
+            <p class="text-sm opacity-75 mt-2">استشارات مالية، قانونية، تقنية، وصحية بالذكاء الاصطناعي</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="experts-grid">
+            <!-- الخبراء سيتم إضافتهم هنا -->
+        </div>
+    </main>
+
+    <script>
+        const experts = [
+            { id: 1, name: 'د. محمد الاستثماري', title: 'دليل الاستثمار 📈', category: 'money', desc: 'سوق الأسهم، الصكوك، تنويع المحفظة' },
+            { id: 2, name: 'د. يوسف الشامل', title: 'ملك التوظيف 🔥', category: 'career', desc: 'كتابة السيرة الذاتية، المقابلات، التفاوض' },
+            { id: 3, name: 'د. فهد السكني', title: 'محطم أزمة الإيجارات 🏠', category: 'money', desc: 'التملك مقابل الإيجار، التمويل العقاري' },
+            { id: 4, name: 'أ. نورة الحرة', title: 'ملكة الدخل الإضافي 💸', category: 'money', desc: 'العمل الحر، التجارة الإلكترونية' },
+            { id: 5, name: 'أ. جمانة الرقمية', title: 'خبيرة التسويق الرقمي 📱', category: 'business', desc: 'التواصل الاجتماعي، المحتوى الفيروسي' },
+            { id: 6, name: 'أ. بندر الريادي', title: 'مهندس النمو 🚀', category: 'business', desc: 'الهوية التجارية، توسيع الشركات' },
+            { id: 7, name: 'د. سارة الهادئة', title: 'معالجة القلق 🧘', category: 'self', desc: 'الوعي اللحظي، التوازن، نوبات الهلع' },
+            { id: 8, name: 'د. تالا الحيوية', title: 'مهندسة الصحة 🌿', category: 'health', desc: 'خسارة الوزن، تحسين النوم، الطاقة' },
+            { id: 9, name: 'د. حنان المحررة', title: 'خبيرة الحدود 🚪', category: 'self', desc: 'قول لا، تقدير الذات، العلاقات السامة' },
+            { id: 10, name: 'د. لين الشاملة', title: 'خبيرة AI 🤖', category: 'ai', desc: 'هندسة الأوامر، النماذج اللغوية' },
+            { id: 11, name: 'م. راكان الفرص', title: 'محلل الفرص 🎯', category: 'tech', desc: 'توجهات SaaS، التحقق من الأفكار' },
+            { id: 12, name: 'أ. هند الخبيرة', title: 'سيدة فجوة المهارات 🎯', category: 'career', desc: 'تحديد الفجوات، التحول المهني' },
+            { id: 13, name: 'المستشار سلطان', title: 'درعك القانوني ⚖️', category: 'legal', desc: 'نظام العمل، العقود التجارية' },
+            { id: 14, name: 'أ. منال المعقب الحكومي', title: 'دليلك الحكومي 🇸🇦', category: 'legal', desc: 'أبشر، قوى، ناجز، الخدمات الإلكترونية' },
+            { id: 15, name: 'م. فيصل المطابق', title: 'خبير ZATCA 🧾', category: 'tech', desc: 'الفوترة الإلكترونية، الامتثال التقني' },
+            { id: 16, name: 'م. عبدالرحمن الشامل', title: 'المستشار التقني 🧭', category: 'tech', desc: 'اختيار التقنيات، تصميم الأنظمة' },
+            { id: 17, name: 'د. ليلى الواعية', title: 'حامية الصحة النفسية 🧠', category: 'ai', desc: 'إدمان التقنية، الديتوكس الرقمي' },
+            { id: 18, name: 'كابتن عزام', title: 'مدرب اللياقة 💪', category: 'health', desc: 'بناء العضلات، تمارين المنزل والجيم' },
+            { id: 19, name: 'أ. عمار الأكاديمي', title: 'مرشد الطلاب 🎓', category: 'career', desc: 'قياس، قدرات، اختيار التخصص' },
+            { id: 20, name: 'أ. زياد الكاتب', title: 'مهندس المحتوى الفيروسي ✍️', category: 'business', desc: 'كتابة سيناريوهات، نصوص إعلانية' },
+            { id: 21, name: 'أ. ريم الاجتماعية', title: 'كاسرة الوحدة 🤝', category: 'self', desc: 'التغلب على الوحدة، تكوين صداقات' },
+            { id: 22, name: 'أ. لطيفة الصبورة', title: 'مهندسة الميزانيات 💙', category: 'money', desc: 'المصاريف اليومية، استراتيجيات الادخار' }
+        ];
+
+        const categories = {
+            money: 'المال والثروة',
+            career: 'التعليم والمهنة',
+            business: 'ريادة الأعمال',
+            legal: 'الاستشارات القانونية',
+            ai: 'الذكاء الاصطناعي',
+            tech: 'التقنية والبرمجة',
+            health: 'الصحة والحياة',
+            self: 'النفس والعلاقات'
+        };
+
+        const grid = document.getElementById('experts-grid');
+        
+        experts.forEach(expert => {
+            const card = document.createElement('div');
+            card.className = 'expert-card card-hover cursor-pointer';
+            card.onclick = () => {
+                alert(`سيتم قريباً: فتح محادثة مع ${expert.name}\n\nللآن، يرجى استخدام الموقع الرئيسي على:\nhttp://localhost:3000`);
+            };
+            
+            card.innerHTML = `
+                <span class="category-badge ${expert.category}">${categories[expert.category]}</span>
+                <h3 class="text-xl font-black text-gray-900 mb-1">${expert.name}</h3>
+                <p class="text-base text-purple-600 font-bold mb-3">${expert.title}</p>
+                <p class="text-sm text-gray-600">${expert.desc}</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-lg font-bold hover:from-purple-700 hover:to-indigo-700 transition-all">
+                    ابدأ المحادثة
+                </button>
+            `;
+            
+            grid.appendChild(card);
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-16">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-sm opacity-75">ملهم - منصة الخبراء | جميع الحقوق محفوظة © 2025</p>
+            <p class="text-xs opacity-50 mt-2">مدعوم بـ Claude AI & Gemini</p>
+        </div>
+    </footer>
+</body>
+</html>

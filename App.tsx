@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { LandingPage } from './components/LandingPage';
-import { ExpertChat } from './components/ExpertChat';
+import { ExpertChat } from './components/ExpertChat.tsx';
 import { ChatMessage, Theme, Expert } from './types-hybrid';
 import { EXPERTS } from './data/experts-hybrid';
 
