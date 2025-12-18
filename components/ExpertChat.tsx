@@ -28,6 +28,7 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [usageStats, setUsageStats] = useState<UserUsageStats>(usageTracker.getStats());
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
@@ -36,6 +37,10 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasStartedRef = useRef(false);
+
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -309,14 +314,16 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
           return (
             <React.Fragment key={msg.id}>
               <div 
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} transition-all duration-500 ${
+                  isPageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}
               >
-                <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl ${
+                <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl transition-all duration-300 ${
                   msg.role === 'user' 
-                    ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-br-sm px-4 py-3' 
+                    ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-br-sm px-3 sm:px-4 py-2.5 sm:py-3 hover:shadow-lg' 
                     : msg.isError
-                      ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-bl-sm px-4 py-3'
-                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-100 dark:border-gray-700 px-4 py-3'
+                      ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-bl-sm px-3 sm:px-4 py-2.5 sm:py-3'
+                      : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-100 dark:border-gray-700 px-3 sm:px-4 py-2.5 sm:py-3 hover:shadow-md'
                 }`}>
               {/* Message content */}
               {msg.role === 'model' && !msg.isError && msg.content.length > 200 ? (

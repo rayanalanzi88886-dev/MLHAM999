@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Lightbulb, Volume2, StopCircle } from 'lucide-react';
+import { Copy, Check, Lightbulb, Volume2, StopCircle, Download, ArrowRightLeft } from 'lucide-react';
 
 interface FormattedTextProps {
   text: string;
@@ -9,6 +9,7 @@ interface FormattedTextProps {
 export const FormattedText: React.FC<FormattedTextProps> = ({ text, isUser }) => {
   const [copied, setCopied] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [copiedTable, setCopiedTable] = useState<number | null>(null);
 
   const handleCopy = async () => {
     try {
@@ -17,6 +18,22 @@ export const FormattedText: React.FC<FormattedTextProps> = ({ text, isUser }) =>
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text', err);
+    }
+  };
+
+  const handleCopyTableAsCSV = async (headers: string[], dataRows: string[][], tableKey: number) => {
+    try {
+      // تحويل الجدول إلى CSV
+      const csvContent = [
+        headers.join(','),
+        ...dataRows.map(row => row.join(','))
+      ].join('\n');
+      
+      await navigator.clipboard.writeText(csvContent);
+      setCopiedTable(tableKey);
+      setTimeout(() => setCopiedTable(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy table', err);
     }
   };
 
@@ -44,34 +61,89 @@ export const FormattedText: React.FC<FormattedTextProps> = ({ text, isUser }) =>
     const headers = rows[0].split('|').filter(c => c.trim() !== '').map(c => c.trim());
     const dataRows = rows.slice(2).map(row => row.split('|').filter(c => c.trim() !== '').map(c => c.trim()));
 
+    // تحديد ما إذا كانت الخلية تحتوي على أرقام أو نسب مئوية
+    const isNumericCell = (cell: string) => {
+      return /^\d+[%,.\d]*$/.test(cell.trim()) || /^\d+\.?\d*%$/.test(cell.trim());
+    };
+
     return (
-      <div key={key} className="my-4 sm:my-5 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm bg-white dark:bg-surface-dark">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-gray-800/50">
-                {headers.map((h, i) => (
-                  <th key={i} className="px-4 py-3 sm:px-5 sm:py-4 text-right font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wider whitespace-nowrap border-b border-gray-200 dark:border-gray-700 first:border-r-0 border-r border-gray-100 dark:border-gray-800 last:border-r-0">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
-              {dataRows.map((row, i) => (
-                <tr key={i} className={`
-                  transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-900/10
-                  ${i % 2 === 0 ? 'bg-white dark:bg-surface-dark' : 'bg-gray-50/50 dark:bg-white/5'}
-                `}>
-                  {row.map((cell, j) => (
-                    <td key={j} className="px-4 py-3 sm:px-5 sm:py-3.5 whitespace-nowrap text-gray-700 dark:text-gray-300 border-r border-transparent last:border-r-0">
-                      <span dangerouslySetInnerHTML={{ __html: formatInlineStyles(cell) }} />
-                    </td>
+      <div key={key} className="my-5 sm:my-6 group/table relative">
+        {/* زر نسخ الجدول - يظهر عند التحويم */}
+        <div className="absolute -top-3 left-2 z-10 opacity-0 group-hover/table:opacity-100 transition-opacity">
+          <button
+            onClick={() => handleCopyTableAsCSV(headers, dataRows, key)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-700 rounded-full shadow-md hover:shadow-lg transition-all text-xs font-bold text-gray-700 dark:text-gray-300"
+            title="نسخ الجدول كـ CSV"
+          >
+            {copiedTable === key ? (
+              <>
+                <Check className="w-3 h-3 text-green-500" />
+                <span className="text-green-600 dark:text-green-400">تم النسخ!</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-3 h-3" />
+                <span>نسخ CSV</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* مؤشر التمرير للجوال */}
+        <div className="sm:hidden flex items-center justify-center gap-2 mb-2 text-[10px] text-gray-400 dark:text-gray-500">
+          <ArrowRightLeft className="w-3 h-3" />
+          <span>مرر لليسار لعرض المزيد</span>
+        </div>
+
+        {/* حاوية الجدول */}
+        <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-900/50">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500">
+            <table className="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                  {headers.map((h, i) => (
+                    <th 
+                      key={i} 
+                      className="px-4 py-3 sm:px-6 sm:py-4 text-right font-black text-[11px] sm:text-sm text-gray-800 dark:text-gray-100 uppercase tracking-wide whitespace-nowrap border-l border-gray-200 dark:border-gray-700 first:border-l-0"
+                    >
+                      {h}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
+                {dataRows.map((row, i) => (
+                  <tr 
+                    key={i} 
+                    className={`
+                      transition-all duration-200 hover:bg-blue-50/70 dark:hover:bg-blue-900/20 hover:scale-[1.01]
+                      ${i % 2 === 0 
+                        ? 'bg-white dark:bg-gray-800/50' 
+                        : 'bg-gray-50/80 dark:bg-gray-900/30'
+                      }
+                    `}
+                  >
+                    {row.map((cell, j) => (
+                      <td 
+                        key={j} 
+                        className={`
+                          px-4 py-2.5 sm:px-6 sm:py-3 
+                          text-[12px] sm:text-sm
+                          whitespace-nowrap 
+                          text-gray-700 dark:text-gray-300 
+                          border-l border-gray-100 dark:border-gray-800/50 
+                          first:border-l-0
+                          ${isNumericCell(cell) ? 'font-mono font-bold text-blue-600 dark:text-blue-400' : ''}
+                        `}
+                      >
+                        <span dangerouslySetInnerHTML={{ __html: formatInlineStyles(cell) }} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     );
