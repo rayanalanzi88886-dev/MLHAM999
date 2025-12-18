@@ -191,35 +191,6 @@ export const ExpertChat: React.FC<ExpertChatProps> = ({
               </p>
             </div>
           </div>
-
-          {/* Left side - Stats */}
-          <div className="hidden sm:flex flex-col items-end text-xs text-gray-500 dark:text-gray-400 ml-2">
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium">التكلفة:</span>
-              <span className="text-green-600 dark:text-green-400 font-bold">
-                ${usageStats.totalCost.toFixed(4)}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium">الرسائل:</span>
-              <span className="text-blue-600 dark:text-blue-400 font-bold">
-                {usageStats.totalCalls}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile stats bar */}
-        <div className="sm:hidden px-3 pb-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>التكلفة: <span className="text-green-600 font-bold">${usageStats.totalCost.toFixed(4)}</span></span>
-          <span>الرسائل: <span className="text-blue-600 font-bold">{usageStats.totalCalls}</span></span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] ${
-            expert.apiProvider === 'claude' 
-              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
-              : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
-          }`}>
-            {expert.apiProvider === 'claude' ? 'Claude Haiku' : 'Gemini Flash'}
-          </span>
         </div>
       </div>
 
