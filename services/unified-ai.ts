@@ -13,7 +13,7 @@ export interface AIResponse {
     input: number;
     output: number;
   };
-  provider: 'claude' | 'gemini';
+  provider: 'claude' | 'openai';
   cached?: boolean;
 }
 
@@ -275,19 +275,18 @@ async function callClaude(
   }
 }
 
-// ===== Gemini API =====
-async function callGemini(
+// ===== OpenAI API =====
+async function callOpenAI(
   messages: ChatMessage[],
   expert: Expert,
   attachments: ChatAttachment[]
 ): Promise<AIResponse> {
   
-  // Use a serverless proxy to avoid exposing keys and referrer restrictions
-  const modelName = 'gemini-1.5-flash-8b-latest';
-  const modelConfig = MODEL_COSTS['gemini-flash'] || { input: 0, output: 0 };
+  const modelName = 'gpt-4o-mini';
+  const modelConfig = MODEL_COSTS['gpt-4o-mini'] || { input: 0.15, output: 0.6 }; // per 1M tokens
 
   try {
-    const response = await fetch('/api/gemini', {
+    const response = await fetch('/api/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -300,60 +299,52 @@ async function callGemini(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Gemini API Error:', errorData);
+      console.error('OpenAI API Error:', errorData);
       
       if (response.status === 400) {
-        const msg = (errorData && (errorData.error || errorData.error?.message || errorData.message)) || 'طلب غير صالح إلى Gemini API';
+        const msg = (errorData && (errorData.error || errorData.message)) || 'طلب غير صالح إلى OpenAI API';
         throw new Error(msg);
       } else if (response.status === 401 || response.status === 403) {
-        throw new Error('مفتاح Gemini API غير صالح أو منتهي الصلاحية');
+        throw new Error('مفتاح OpenAI API غير صالح أو منتهي الصلاحية');
       } else if (response.status === 429) {
-        throw new Error('تم تجاوز الحد المسموح. Gemini مجاني حتى 1500 طلب/يوم');
+        throw new Error('تم تجاوز الحد المسموح من الطلبات لـ OpenAI. يرجى المحاولة لاحقاً.');
       }
       
-      throw new Error(`خطأ من Gemini: ${response.status}`);
+      throw new Error(`خطأ من OpenAI: ${response.status}`);
     }
 
     const { data } = await response.json();
     
-    // Extract content
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-                    data.candidates?.[0]?.text || "";
+    // Extract content from OpenAI response
+    const content = data.choices?.[0]?.message?.content || "";
     
     if (!content) {
-      throw new Error('لم يتم استلام محتوى من Gemini');
+      throw new Error('لم يتم استلام محتوى من OpenAI');
     }
 
-    // Calculate cost (Gemini Flash is free up to 1500 requests/day)
-    const usage = data?.usageMetadata || { promptTokenCount: 0, candidatesTokenCount: 0 };
-    const inputTokens = usage.promptTokenCount || 0;
-    const outputTokens = usage.candidatesTokenCount || 0;
+    // Calculate cost
+    const usage = data?.usage || { prompt_tokens: 0, completion_tokens: 0 };
+    const inputTokens = usage.prompt_tokens || 0;
+    const outputTokens = usage.completion_tokens || 0;
 
-    // Gemini Flash is free for now
     const inputCost = (inputTokens / 1_000_000) * modelConfig.input;
     const outputCost = (outputTokens / 1_000_000) * modelConfig.output;
     const totalCost = inputCost + outputCost;
 
-    console.log(`✨ Gemini ${modelName} | Cost: $${totalCost.toFixed(5)} (Free tier) | Tokens: ${inputTokens + outputTokens}`);
+    console.log(`🤖 OpenAI ${modelName} | Cost: $${totalCost.toFixed(5)} | Tokens: ${inputTokens + outputTokens}`);
 
     return {
       content,
       modelUsed: modelName,
       cost: totalCost,
       tokensUsed: { input: inputTokens, output: outputTokens },
-      provider: 'gemini',
+      provider: 'openai',
       cached: false
     };
 
   } catch (error: any) {
-    console.error('❌ Gemini API Error:', error);
-    
-    // If it's already a formatted error, throw it
-    if (error.message.includes('مفتاح') || error.message.includes('تجاوز')) {
-      throw error;
-    }
-    
-    throw new Error(`خطأ في الاتصال بـ Gemini: ${error.message}`);
+    console.error('❌ OpenAI API Error:', error);
+    throw error;
   }
 }
 
@@ -394,8 +385,8 @@ export const callUnifiedAPI = async (
   try {
     if (expert.apiProvider === 'claude') {
       response = await callClaude(messages, expert, attachments);
-    } else if (expert.apiProvider === 'gemini') {
-      response = await callGemini(messages, expert, attachments);
+    } else if (expert.apiProvider === 'openai') {
+      response = await callOpenAI(messages, expert, attachments);
     } else {
       throw new Error(`مزود API غير معروف: ${expert.apiProvider}`);
     }
