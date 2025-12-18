@@ -282,50 +282,20 @@ async function callGemini(
   attachments: ChatAttachment[]
 ): Promise<AIResponse> {
   
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('مفتاح Gemini API غير موجود في المتغيرات البيئية');
-  }
-
-  // Use a stable, widely available Gemini model
+  // Use a serverless proxy to avoid exposing keys and referrer restrictions
   const modelName = 'gemini-1.5-flash-8b-latest';
   const modelConfig = MODEL_COSTS['gemini-flash'] || { input: 0, output: 0 };
-  
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
-
-  // Build contents: prepend system instruction to ensure compatibility without systemInstruction field
-  const contents = [
-    {
-      role: 'user',
-      parts: [{ text: `SYSTEM INSTRUCTIONS:\n${expert.systemInstruction}` }]
-    },
-    ...messages
-      .filter(m => m.role !== 'system')
-      .map(msg => ({
-        role: msg.role === 'model' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      }))
-  ];
-
-  const body = {
-    contents,
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: expert.complexityLevel === 'simple' ? 800 : 
-                       expert.complexityLevel === 'medium' ? 1200 : 1600,
-      topP: 0.95,
-      topK: 40,
-    }
-  };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch('/api/gemini', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
-      },
-      body: JSON.stringify(body)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages,
+        systemInstruction: expert.systemInstruction,
+        complexityLevel: expert.complexityLevel,
+        model: modelName
+      })
     });
 
     if (!response.ok) {
@@ -333,7 +303,7 @@ async function callGemini(
       console.error('Gemini API Error:', errorData);
       
       if (response.status === 400) {
-        const msg = (errorData && (errorData.error?.message || errorData.message)) || 'طلب غير صالح إلى Gemini API';
+        const msg = (errorData && (errorData.error || errorData.error?.message || errorData.message)) || 'طلب غير صالح إلى Gemini API';
         throw new Error(msg);
       } else if (response.status === 401 || response.status === 403) {
         throw new Error('مفتاح Gemini API غير صالح أو منتهي الصلاحية');
@@ -344,7 +314,7 @@ async function callGemini(
       throw new Error(`خطأ من Gemini: ${response.status}`);
     }
 
-    const data = await response.json();
+    const { data } = await response.json();
     
     // Extract content
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 
@@ -355,7 +325,7 @@ async function callGemini(
     }
 
     // Calculate cost (Gemini Flash is free up to 1500 requests/day)
-    const usage = data.usageMetadata || { promptTokenCount: 0, candidatesTokenCount: 0 };
+    const usage = data?.usageMetadata || { promptTokenCount: 0, candidatesTokenCount: 0 };
     const inputTokens = usage.promptTokenCount || 0;
     const outputTokens = usage.candidatesTokenCount || 0;
 
